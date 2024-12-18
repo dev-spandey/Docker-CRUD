@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - crud-network
+
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/cruddb
+    depends_on:
+      - mongo
+    networks:
+      - crud-network
+
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - crud-network
+    environment:
+      - MONGO_INITDB_DATABASE=cruddb  # Optional: Specify the database
+
+networks:
+  crud-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
